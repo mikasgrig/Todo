@@ -88,16 +88,45 @@ forms[0].addEventListener('submit', function (e) {
 
 document.addEventListener('click', function (e) {
   if (e.target.matches('.delete')) {
+    var duomenys = localStorage.getItem("Sarasas");
+    duomenys = JSON.parse(duomenys);
+    h4 = e.target.closest(".todo-item").querySelector("h4");
+    var h4text = h4.innerText;
+    var todo = h4text;
+    duomenys = duomenys.filter(todoold => {
+      return todoold.todo != todo
+    });
+    duomenys = JSON.stringify(duomenys);
+    localStorage.setItem('Sarasas', duomenys);
     e.target.closest(".todo-item").remove();
   }
   else if (e.target.matches('.move-todo')) {
     var cardAll = e.target.closest('.todo-item');
+    var duomenys = localStorage.getItem("Sarasas");
+    duomenys = JSON.parse(duomenys);
+    console.log("old", duomenys)
     if (e.target.innerText == 'Move to Done') {
-      e.target.innerText = 'Move back';
+      e.target.innerText = 'Move to back';
       card1.appendChild(cardAll);
+      h4 = e.target.closest(".todo-item").querySelector("h4");
+      var h4text = h4.innerText;
+      console.log(h4text)
+      duomenys = duomenys.map(item => item.todo == h4text? {
+        ...item, done: !item.todo
+      } : item );
+      duomenys = JSON.stringify(duomenys);
+      localStorage.setItem('Sarasas', duomenys);
     } else {
       e.target.innerText = 'Move to Done';
       card.appendChild(cardAll);
+      h4 = e.target.closest(".todo-item").querySelector("h4");
+      var h4text = h4.innerText;
+      console.log(h4text)
+      duomenys = duomenys.map(item => item.todo == h4text? {
+        ...item, done: !item.done
+      } : item );
+      duomenys = JSON.stringify(duomenys);
+      localStorage.setItem('Sarasas', duomenys);
     }
   }
   if (e.target.matches('.edit')) {
