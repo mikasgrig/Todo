@@ -26,15 +26,28 @@ var h4;
 // localStorage.setItem('Sarasas', duomenys)
 var duomenys = localStorage.getItem("Sarasas");
 duomenys = JSON.parse(duomenys);
-console.log(duomenys)
 
 duomenys.forEach(element => {
 
-  if ()
-  
+  if (element.done === true) {
+    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item"><h4 class="mb-3 input-name mano"> ${element.todo}</h4>
+    <button class="btn btn-danger delete" type="button">Delete</button>
+    <button class="btn btn-success move-todo" type="button">Move to Done</button>
+    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button></div>`
+    card.innerHTML += cardnew
+  } else {
+    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item"><h4 class="mb-3 input-name mano"> ${element.todo}</h4>
+    <button class="btn btn-danger delete" type="button">Delete</button>
+    <button class="btn btn-success move-todo" type="button">Move to Back</button>
+    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button></div>`
+    card1.innerHTML += cardnew
+  }
+
 });
 forms[0].addEventListener('submit', function (e) {
   e.preventDefault()
+  var duomenys = localStorage.getItem("Sarasas");
+  duomenys = JSON.parse(duomenys);
   var list = document.getElementById("todo-input").value
   if (list.length > 0) {
     var div = document.createElement("div");
@@ -63,6 +76,7 @@ forms[0].addEventListener('submit', function (e) {
     card.appendChild(div);
     forms[0].reset()
     document.getElementById("todo-input").classList.remove('is-invalid')
+
   } else {
     document.getElementById("todo-input").classList.add('is-invalid')
   }
@@ -76,13 +90,13 @@ document.addEventListener('click', function (e) {
   else if (e.target.matches('.move-todo')) {
     var cardAll = e.target.closest('.todo-item');
     if (e.target.innerText == 'Move to Done') {
-        e.target.innerText = 'Move back';
-        card1.appendChild(cardAll);
+      e.target.innerText = 'Move back';
+      card1.appendChild(cardAll);
     } else {
-        e.target.innerText = 'Move to Done';
-        card.appendChild(cardAll);
+      e.target.innerText = 'Move to Done';
+      card.appendChild(cardAll);
     }
-}
+  }
   if (e.target.matches('.edit')) {
     h4 = e.target.closest(".todo-item").querySelector("h4");
     var h4text = h4.innerText;
@@ -91,7 +105,7 @@ document.addEventListener('click', function (e) {
   if (e.target.matches('.save')) {
     h4.innerText = editInput.value
   }
-  
+
 });
 
 
