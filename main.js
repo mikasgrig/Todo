@@ -74,6 +74,9 @@ forms[0].addEventListener('submit', function (e) {
     div.appendChild(move)
     div.appendChild(edit)
     card.appendChild(div);
+    duomenys.push({ todo: list, done: true })
+    duomenys = JSON.stringify(duomenys);
+    localStorage.setItem('Sarasas', duomenys);
     forms[0].reset()
     document.getElementById("todo-input").classList.remove('is-invalid')
 
