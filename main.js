@@ -29,7 +29,7 @@ duomenys = JSON.parse(duomenys);
 
 duomenys.forEach(element => {
 
-  if (element.done === true) {
+  if (element.done === false) {
     var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item"><h4 class="mb-3 input-name mano"> ${element.todo}</h4>
     <button class="btn btn-danger delete" type="button">Delete</button>
     <button class="btn btn-success move-todo" type="button">Move to Done</button>
@@ -74,7 +74,7 @@ forms[0].addEventListener('submit', function (e) {
     div.appendChild(move)
     div.appendChild(edit)
     card.appendChild(div);
-    duomenys.push({ todo: list, done: true })
+    duomenys.push({ todo: list, done: false })
     duomenys = JSON.stringify(duomenys);
     localStorage.setItem('Sarasas', duomenys);
     forms[0].reset()
@@ -104,15 +104,13 @@ document.addEventListener('click', function (e) {
     var cardAll = e.target.closest('.todo-item');
     var duomenys = localStorage.getItem("Sarasas");
     duomenys = JSON.parse(duomenys);
-    console.log("old", duomenys)
     if (e.target.innerText == 'Move to Done') {
-      e.target.innerText = 'Move to back';
+      e.target.innerText = 'Move to Back';
       card1.appendChild(cardAll);
       h4 = e.target.closest(".todo-item").querySelector("h4");
       var h4text = h4.innerText;
-      console.log(h4text)
       duomenys = duomenys.map(item => item.todo == h4text? {
-        ...item, done: !item.todo
+        ...item, done: !item.done
       } : item );
       duomenys = JSON.stringify(duomenys);
       localStorage.setItem('Sarasas', duomenys);
@@ -121,7 +119,6 @@ document.addEventListener('click', function (e) {
       card.appendChild(cardAll);
       h4 = e.target.closest(".todo-item").querySelector("h4");
       var h4text = h4.innerText;
-      console.log(h4text)
       duomenys = duomenys.map(item => item.todo == h4text? {
         ...item, done: !item.done
       } : item );
@@ -135,9 +132,19 @@ document.addEventListener('click', function (e) {
     editInput.value = h4text;
   }
   if (e.target.matches('.save')) {
-    h4.innerText = editInput.value
-  }
+    var newname =  editInput.value
+    var h4text = h4.innerText
+    var duomenys = localStorage.getItem("Sarasas");
+    duomenys = JSON.parse(duomenys);
 
+    duomenys = duomenys.map(item => item.todo == h4text? {
+      ...item, todo: newname
+    } : item );
+    h4.innerText = newname
+    duomenys = JSON.stringify(duomenys);
+      localStorage.setItem('Sarasas', duomenys);
+  }
+  
 });
 
 
