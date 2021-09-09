@@ -35,6 +35,7 @@ window.onload = async ()  => {
   });
 };
 
+
 forms[0].addEventListener('submit',async function (e) {
   e.preventDefault()
   let title = document.getElementById("todo-input").value
@@ -49,8 +50,15 @@ forms[0].addEventListener('submit',async function (e) {
     document.getElementById("todo-input1").classList.add('is-invalid')
   }else {
     await crateTodo(title, description, difficulty);
+    document.getElementById("todo-input").value = "";
+    document.getElementById("todo-input1").value = "";
+    document.getElementById("todo-input3").value = "Easy";
+    document.getElementById("todo-input").classList.remove('is-invalid')
+    document.getElementById("todo-input1").classList.remove('is-invalid')
     location.reload();
   }
+
+
 });
 
 document.addEventListener('click',async function (e) {
