@@ -12,10 +12,6 @@ var difficultyInput = document.getElementById("todo-input6")
 var h4;
 var idUptade
 
-
-var duomenys = localStorage.getItem("Sarasas");
-duomenys = JSON.parse(duomenys);
-
 window.onload = async ()  => {
   const todos = await getTodos();
   todos.forEach(todo => {
@@ -34,7 +30,6 @@ window.onload = async ()  => {
     }
   });
 };
-
 
 forms[0].addEventListener('submit',async function (e) {
   e.preventDefault()
@@ -57,10 +52,7 @@ forms[0].addEventListener('submit',async function (e) {
     document.getElementById("todo-input1").classList.remove('is-invalid')
     location.reload();
   }
-
-
 });
-
 document.addEventListener('click',async function (e) {
   if (e.target.matches('.delete')) {
     var id = e.target.closest(".todo-item").id;
