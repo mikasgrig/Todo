@@ -24,67 +24,45 @@ var h4;
 // ];
 // duomenys = JSON.stringify(duomenys);
 // localStorage.setItem('Sarasas', duomenys)
+
 var duomenys = localStorage.getItem("Sarasas");
 duomenys = JSON.parse(duomenys);
 
-duomenys.forEach(element => {
-
-  if (element.done === false) {
-    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item"><h4 class="mb-3 input-name mano"> ${element.todo}</h4>
+window.onload = async ()  => {
+  const todos = await getTodos();
+  todos.forEach(todo => {
+    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item" data-id = ${todo.id}><h3 class="mb-3 input-name mano"> ${todo.title}</h3>
+    <h4 class="mb-3 input-name mano"> ${todo.description}</h4>
+    <h5 class="mb-3 input-name mano"> ${todo.difficulty}</h5>
     <button class="btn btn-danger delete" type="button">Delete</button>
-    <button class="btn btn-success move-todo" type="button">Move to Done</button>
-    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button></div>`
-    card.innerHTML += cardnew
-  } else {
-    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item"><h4 class="mb-3 input-name mano"> ${element.todo}</h4>
-    <button class="btn btn-danger delete" type="button">Delete</button>
-    <button class="btn btn-success move-todo" type="button">Move to Back</button>
-    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button></div>`
-    card1.innerHTML += cardnew
-  }
+    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button>`
+    if (todo.isDone === false) {
+      cardnew += `<button class="btn btn-success move-todo" type="button">Move to Done</button></div>`
+      card.innerHTML += cardnew
+    } else {
+      cardnew += `<button class="btn btn-success move-todo" type="button">Move to Back</button></div>`
+      card1.innerHTML += cardnew
+    }
+  });
+};
 
-});
-forms[0].addEventListener('submit', function (e) {
+forms[0].addEventListener('submit',async function (e) {
   e.preventDefault()
-  var duomenys = localStorage.getItem("Sarasas");
-  duomenys = JSON.parse(duomenys);
-  var list = document.getElementById("todo-input").value
-  if (list.length > 0) {
-    var div = document.createElement("div");
-    div.classList.add("border", "border-1", "shadow-sm", "p-3", "mb-3", "bg-body", "rounded", "todo-item");
-    var text = document.createElement('h4');
-    text.classList.add("mb-3", "input-name", "mano");
-    text.innerHTML = list
-    var delet = document.createElement('button');
-    delet.classList.add("btn", "btn-danger", "delete");
-    delet.setAttribute('type', 'button');
-    delet.innerHTML = "Delete"
-    var move = document.createElement('button');
-    move.classList.add("btn", "btn-success", "move-todo");
-    move.setAttribute('type', 'button');
-    move.innerHTML = "Move to Done"
-    var edit = document.createElement('button');
-    edit.classList.add("btn", "btn-warning", "edit");
-    edit.setAttribute('type', 'button');
-    edit.setAttribute('data-bs-toggle', 'modal');
-    edit.setAttribute('data-bs-target', '#exampleModal');
-    edit.innerHTML = "Edit"
-    div.appendChild(text)
-    div.appendChild(delet)
-    div.appendChild(move)
-    div.appendChild(edit)
-    card.appendChild(div);
-    duomenys.push({ todo: list, done: false })
-    duomenys = JSON.stringify(duomenys);
-    localStorage.setItem('Sarasas', duomenys);
-    forms[0].reset()
-    document.getElementById("todo-input").classList.remove('is-invalid')
-
-  } else {
+  var title = document.getElementById("todo-input").value
+  var description = document.getElementById("todo-input1").value
+  var difficulty = document.getElementById("todo-input3").value
+  if (title.length <= 0 && description.length <= 0) {
     document.getElementById("todo-input").classList.add('is-invalid')
+    document.getElementById("todo-input1").classList.add('is-invalid')
+  } if(title.length <= 0 ){
+    document.getElementById("todo-input").classList.add('is-invalid')
+  }if(description.length <= 0 ){
+    document.getElementById("todo-input1").classList.add('is-invalid')
+  }else {
+    await crateTodo(title, description, difficulty);
+    location.reload();
   }
 });
-
 
 document.addEventListener('click', function (e) {
   if (e.target.matches('.delete')) {
