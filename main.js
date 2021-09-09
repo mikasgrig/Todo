@@ -6,24 +6,12 @@ var forms = document.querySelectorAll('.needs-validation')
 var button = document.querySelector('.move-todo')
 var button1 = document.querySelector('.move-toback')
 var myModal = document.getElementById('exampleModal')
-var editInput = document.getElementById("todo-input2");
+var titleInput = document.getElementById("todo-input4")
+var descriptionInput = document.getElementById("todo-input5")
+var difficultyInput = document.getElementById("todo-input6")
 var h4;
-// var duomenys = [
-//   {
-//     todo: "Pirmas",
-//     done: true,
-//   },
-//   {
-//     todo: "Antras",
-//     done: false,
-//   },
-//   {
-//     todo: "Trecias",
-//     done: true,
-//   }
-// ];
-// duomenys = JSON.stringify(duomenys);
-// localStorage.setItem('Sarasas', duomenys)
+var idUptade
+
 
 var duomenys = localStorage.getItem("Sarasas");
 duomenys = JSON.parse(duomenys);
@@ -31,7 +19,8 @@ duomenys = JSON.parse(duomenys);
 window.onload = async ()  => {
   const todos = await getTodos();
   todos.forEach(todo => {
-    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item" data-id = ${todo.id}><h3 class="mb-3 input-name mano"> ${todo.title}</h3>
+    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item" id = ${todo.id}>
+    <h3 class="mb-3 input-name mano"> ${todo.title}</h3>
     <h4 class="mb-3 input-name mano"> ${todo.description}</h4>
     <h5 class="mb-3 input-name mano"> ${todo.difficulty}</h5>
     <button class="btn btn-danger delete" type="button">Delete</button>
@@ -48,9 +37,9 @@ window.onload = async ()  => {
 
 forms[0].addEventListener('submit',async function (e) {
   e.preventDefault()
-  var title = document.getElementById("todo-input").value
-  var description = document.getElementById("todo-input1").value
-  var difficulty = document.getElementById("todo-input3").value
+  let title = document.getElementById("todo-input").value
+  let description = document.getElementById("todo-input1").value
+  let difficulty = document.getElementById("todo-input3").value
   if (title.length <= 0 && description.length <= 0) {
     document.getElementById("todo-input").classList.add('is-invalid')
     document.getElementById("todo-input1").classList.add('is-invalid')
@@ -64,65 +53,49 @@ forms[0].addEventListener('submit',async function (e) {
   }
 });
 
-document.addEventListener('click', function (e) {
+document.addEventListener('click',async function (e) {
   if (e.target.matches('.delete')) {
-    var duomenys = localStorage.getItem("Sarasas");
-    duomenys = JSON.parse(duomenys);
-    h4 = e.target.closest(".todo-item").querySelector("h4");
-    var h4text = h4.innerText;
-    var todo = h4text;
-    duomenys = duomenys.filter(todoold => {
-      return todoold.todo != todo
-    });
-    duomenys = JSON.stringify(duomenys);
-    localStorage.setItem('Sarasas', duomenys);
-    e.target.closest(".todo-item").remove();
+    var id = e.target.closest(".todo-item").id;
+    await deleteTodo(id);
+    location.reload();
   }
   else if (e.target.matches('.move-todo')) {
-    var cardAll = e.target.closest('.todo-item');
-    var duomenys = localStorage.getItem("Sarasas");
-    duomenys = JSON.parse(duomenys);
+    
     if (e.target.innerText == 'Move to Done') {
-      e.target.innerText = 'Move to Back';
-      card1.appendChild(cardAll);
-      h4 = e.target.closest(".todo-item").querySelector("h4");
-      var h4text = h4.innerText;
-      duomenys = duomenys.map(item => item.todo == h4text? {
-        ...item, done: !item.done
-      } : item );
-      duomenys = JSON.stringify(duomenys);
-      localStorage.setItem('Sarasas', duomenys);
+      let isDone = true;
+      let id = e.target.closest(".todo-item").id;
+      let body = await updateIsDoneTodo(id, isDone);
+      location.reload();
     } else {
-      e.target.innerText = 'Move to Done';
-      card.appendChild(cardAll);
-      h4 = e.target.closest(".todo-item").querySelector("h4");
-      var h4text = h4.innerText;
-      duomenys = duomenys.map(item => item.todo == h4text? {
-        ...item, done: !item.done
-      } : item );
-      duomenys = JSON.stringify(duomenys);
-      localStorage.setItem('Sarasas', duomenys);
+      let isDone = false;
+      let id = e.target.closest(".todo-item").id;
+      let body = await updateIsDoneTodo(id, isDone);
+      location.reload();
     }
   }
   if (e.target.matches('.edit')) {
-    h4 = e.target.closest(".todo-item").querySelector("h4");
-    var h4text = h4.innerText;
-    editInput.value = h4text;
+    let title = e.target.closest(".todo-item").querySelector("h3");
+    let description = e.target.closest(".todo-item").querySelector("h4");
+    let difficulty = e.target.closest(".todo-item").querySelector("h5");
+    titleInput.value = title.innerText;
+    descriptionInput.value = description.innerText;
+    difficultyInput.value = difficulty.innerText;
+    idUptade = e.target.closest(".todo-item").id;
   }
   if (e.target.matches('.save')) {
-    var newname =  editInput.value
-    var h4text = h4.innerText
-    var duomenys = localStorage.getItem("Sarasas");
-    duomenys = JSON.parse(duomenys);
+    if (titleInput.value.length <= 0 && descriptionInput.value.length <= 0) {
+      document.getElementById("todo-input4").classList.add('is-invalid')
+      document.getElementById("todo-input5").classList.add('is-invalid')
+    } if(titleInput.value.length <= 0 ){
+      document.getElementById("todo-input4").classList.add('is-invalid')
+    }if(descriptionInput.value.length <= 0 ){
+      document.getElementById("todo-input5").classList.add('is-invalid')
+    }else {
+      await uptadeTodo(idUptade, titleInput.value, descriptionInput.value, difficultyInput.value)
+      location.reload();
 
-    duomenys = duomenys.map(item => item.todo == h4text? {
-      ...item, todo: newname
-    } : item );
-    h4.innerText = newname
-    duomenys = JSON.stringify(duomenys);
-      localStorage.setItem('Sarasas', duomenys);
+    }
   }
-  
 });
 
 

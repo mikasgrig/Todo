@@ -21,7 +21,7 @@ console.log(body)
 return body
 }
 async function deleteTodo(id){
- fetch('https://localhost:5001/todos' + id, {
+ let response = await fetch('https://localhost:5001/' + id, {
 method: 'DELETE',
 });
 };
@@ -42,10 +42,10 @@ async function uptadeTodo(id, title, description, difficulty){
   return body;
 };
 async function updateIsDoneTodo(id, isDone){
-  let response = await fetch('https://localhost:5001/todos' + id, {
+  let response = await fetch('https://localhost:5001/todos/' + id, {
     method: 'PUT',
     body: JSON.stringify({
-      isDone: `${isDone}`,
+      isDone: isDone,
     }),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
