@@ -1,17 +1,14 @@
+const baseadres = 'https://localhost:5001/todos/';
 async function getTodos(){
-  let response = await fetch('https://localhost:5001/todos');
+  let response = await fetch(baseadres);
   var todos =  await response.json();
 
   return todos;
 } 
-async function crateTodo(title, description, difficulty){
-  let response= await fetch('https://localhost:5001/todos', {
+async function crateTodo(todoItem){
+  let response= await fetch(baseadres, {
  method: 'POST',
- body: JSON.stringify({
-      title: `${title}`,
-      description: `${description}`,
-      difficulty: `${difficulty}`
- }),
+ body: JSON.stringify(todoItem),
  headers: {
    'Content-type': 'application/json; charset=UTF-8',
  },
@@ -20,20 +17,15 @@ let body = await response.json();
 console.log(body)
 return body
 }
-async function deleteTodo(id){
- let response = await fetch('https://localhost:5001/' + id, {
+ async function deleteTodo(id){
+ await fetch('https://localhost:5001/' + id, {
 method: 'DELETE',
 });
 };
-async function uptadeTodo(id, title, description, difficulty){
-  let response = await fetch('https://localhost:5001/todos', {
+async function uptadeTodo(todo){
+  let response = await fetch(baseadres, {
     method: 'PUT',
-    body: JSON.stringify({
-      id:`${id}`,
-      title: `${title}`,
-      description: `${description}`,
-      difficulty: `${difficulty}`,
-    }),
+    body: JSON.stringify(todo),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
     }
@@ -42,7 +34,7 @@ async function uptadeTodo(id, title, description, difficulty){
   return body;
 };
 async function updateIsDoneTodo(id, isDone){
-  let response = await fetch('https://localhost:5001/todos/' + id, {
+  let response = await fetch(baseadres + id +"/status", {
     method: 'PUT',
     body: JSON.stringify({
       isDone: isDone,

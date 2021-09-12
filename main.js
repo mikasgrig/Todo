@@ -5,27 +5,31 @@ var card1 = document.getElementById('dones')
 var forms = document.querySelectorAll('.needs-validation')
 var button = document.querySelector('.move-todo')
 var button1 = document.querySelector('.move-toback')
+var titleInput = document.getElementById("todo-input")
+var descriptionInput = document.getElementById("todo-input1")
+var difficultyInput = document.getElementById("todo-input3")
 var myModal = document.getElementById('exampleModal')
-var titleInput = document.getElementById("todo-input4")
-var descriptionInput = document.getElementById("todo-input5")
-var difficultyInput = document.getElementById("todo-input6")
+var titleUptadeInput = document.getElementById("todo-input4")
+var descriptionUptadeInput = document.getElementById("todo-input5")
+var difficultyUptadeInput = document.getElementById("todo-input6")
 var h4;
 var idUptade
 
 window.onload = async ()  => {
   const todos = await getTodos();
   todos.forEach(todo => {
-    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item" id = ${todo.id}>
-    <h3 class="mb-3 input-name mano"> ${todo.title}</h3>
-    <h4 class="mb-3 input-name mano"> ${todo.description}</h4>
-    <h5 class="mb-3 input-name mano"> ${todo.difficulty}</h5>
+    var cardnew = `<div class="border border-1 shadow-sm p-3 mb-3 bg-body rounded todo-item" id = ${todo.id} data = ${JSON.stringify(todo)}>
+    <h3 id = "todoItem-title" class="mb-3 input-name mano"> ${todo.title}</h3>
+    <p id = "todoItem-description" class="mb-3 input-name mano"> ${todo.description}</p>
+    <p id="todoItem-difficulty" class="mb-3 input-name mano"> ${todo.difficulty}</p>
     <button class="btn btn-danger delete" type="button">Delete</button>
-    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button>`
+    <button class="btn btn-success move-todo" type="button">${todo.isDone ? "Move to Back" : "Move to Done"}</button>
+    <button class="btn btn-warning edit" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button>
+    </div>
+   `
     if (todo.isDone === false) {
-      cardnew += `<button class="btn btn-success move-todo" type="button">Move to Done</button></div>`
       card.innerHTML += cardnew
     } else {
-      cardnew += `<button class="btn btn-success move-todo" type="button">Move to Back</button></div>`
       card1.innerHTML += cardnew
     }
   });
@@ -33,21 +37,25 @@ window.onload = async ()  => {
 
 forms[0].addEventListener('submit',async function (e) {
   e.preventDefault()
-  let title = document.getElementById("todo-input").value
-  let description = document.getElementById("todo-input1").value
-  let difficulty = document.getElementById("todo-input3").value
-  if (title.length <= 0 && description.length <= 0) {
+  var todoItem = {
+    title : titleInput.value, 
+    description : descriptionInput.value, 
+    difficulty : difficultyInput.value
+  }
+  if (todoItem.title.length <= 0 && todoItem.description.length <= 0) {
     document.getElementById("todo-input").classList.add('is-invalid')
     document.getElementById("todo-input1").classList.add('is-invalid')
-  } if(title.length <= 0 ){
+  } if(todoItem.title.length <= 0 ){
     document.getElementById("todo-input").classList.add('is-invalid')
-  }if(description.length <= 0 ){
+  }if(todoItem.description.length <= 0 ){
     document.getElementById("todo-input1").classList.add('is-invalid')
   }else {
-    await crateTodo(title, description, difficulty);
-    document.getElementById("todo-input").value = "";
-    document.getElementById("todo-input1").value = "";
-    document.getElementById("todo-input3").value = "Easy";
+    
+    await crateTodo(todoItem);
+    // titleInput.value = "";
+    // descriptionInput.value = "";
+    // difficultyInput.value = "Easy";
+    add.reset();
     document.getElementById("todo-input").classList.remove('is-invalid')
     document.getElementById("todo-input1").classList.remove('is-invalid')
     location.reload();
@@ -56,7 +64,7 @@ forms[0].addEventListener('submit',async function (e) {
 document.addEventListener('click',async function (e) {
   if (e.target.matches('.delete')) {
     var id = e.target.closest(".todo-item").id;
-    await deleteTodo(id);
+    deleteTodo(id);
     location.reload();
   }
   else if (e.target.matches('.move-todo')) {
@@ -64,34 +72,44 @@ document.addEventListener('click',async function (e) {
     if (e.target.innerText == 'Move to Done') {
       let isDone = true;
       let id = e.target.closest(".todo-item").id;
-      let body = await updateIsDoneTodo(id, isDone);
+      await updateIsDoneTodo(id, isDone);
       location.reload();
     } else {
       let isDone = false;
       let id = e.target.closest(".todo-item").id;
-      let body = await updateIsDoneTodo(id, isDone);
+      console.log(id)
+      await updateIsDoneTodo(id, isDone);
       location.reload();
     }
   }
   if (e.target.matches('.edit')) {
-    let title = e.target.closest(".todo-item").querySelector("h3");
-    let description = e.target.closest(".todo-item").querySelector("h4");
-    let difficulty = e.target.closest(".todo-item").querySelector("h5");
-    titleInput.value = title.innerText;
-    descriptionInput.value = description.innerText;
-    difficultyInput.value = difficulty.innerText;
+    var dotoItem = e.target.closest(".todo-item").data
+    console.log(dotoItem)
+    let title = e.target.closest(".todo-item").querySelector("#todoItem-title");
+    let description = e.target.closest(".todo-item").querySelector("#todoItem-description");
+    let difficulty = e.target.closest(".todo-item").querySelector("#todoItem-difficulty");
+    titleUptadeInput.value = title.innerText;
+    descriptionUptadeInput.value = description.innerText;
+    difficultyUptadeInput.value = difficulty.innerText;
     idUptade = e.target.closest(".todo-item").id;
+    console.log(idUptade)
   }
   if (e.target.matches('.save')) {
-    if (titleInput.value.length <= 0 && descriptionInput.value.length <= 0) {
+    if (titleUptadeInput.value.length <= 0 && descriptionUptadeInput.value.length <= 0) {
       document.getElementById("todo-input4").classList.add('is-invalid')
       document.getElementById("todo-input5").classList.add('is-invalid')
-    } if(titleInput.value.length <= 0 ){
+    } if(titleUptadeInput.value.length <= 0 ){
       document.getElementById("todo-input4").classList.add('is-invalid')
-    }if(descriptionInput.value.length <= 0 ){
+    }if(descriptionUptadeInput.value.length <= 0 ){
       document.getElementById("todo-input5").classList.add('is-invalid')
     }else {
-      await uptadeTodo(idUptade, titleInput.value, descriptionInput.value, difficultyInput.value)
+      var todoItemUpdate = {
+        id : idUptade, 
+        title : titleUptadeInput.value, 
+        description : descriptionUptadeInput.value, 
+        difficulty : difficultyUptadeInput.value
+      }
+      await uptadeTodo(todoItemUpdate)
       location.reload();
 
     }
